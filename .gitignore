@@ -4,3 +4,5 @@ __pycache__/
 data.json
 *.pyc
 main-Copy1.py
+.ipynb_checkpoints/
+.DS_Store
