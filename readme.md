@@ -119,6 +119,14 @@ Open:
   "feedback": "Food was cold and service was slow"
 }
 ```
+## 📊 Example Output
+
+{
+  "sentiment": "mixed",
+  "topics": ["food", "service"],
+  "priority": "high",
+  "recommended_action": "Investigate food quality and improve service speed"
+}
 
 ### Ask questions
 
