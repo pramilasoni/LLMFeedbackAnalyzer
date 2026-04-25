@@ -1,3 +1,6 @@
+# Intro
+Designed with production-ready architecture patterns including service orchestration, provider abstraction, and retrieval-based reasoning.”
+
 # 🚀 LLM Feedback Analyzer (RAG-based System)
 
 An AI-powered backend system that analyzes customer feedback and enables intelligent querying using **Retrieval-Augmented Generation (RAG)**.
