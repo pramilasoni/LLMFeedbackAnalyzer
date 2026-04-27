@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from repositories.data_repository import get_all_records
 from services.feedback_service import analyze_feedback
 from services.rag_service import ask_question
+from services.agent_service import run_agent
 
 
 app = FastAPI()
@@ -25,6 +26,8 @@ class AnalyzeResponse(BaseModel):
     priority: str
     recommended_action: str
 
+class AgentRequest(BaseModel):
+    question: str
 
 @app.get("/")
 def home():
@@ -52,5 +55,12 @@ def ask(request: QuestionRequest):
     try:
         answer = ask_question(request.question)
         return {"answer": answer}
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/agent")
+def agent(request: AgentRequest):
+    try:
+        return run_agent(request.question)
     except Exception as e:
         return {"error": str(e)}
