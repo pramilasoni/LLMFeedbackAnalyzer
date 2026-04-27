@@ -3,7 +3,7 @@ import json
 from providers.llm_provider import generate_response
 from providers.embedding_provider import get_embedding
 from repositories.data_repository import save_record
-from repositories.vector_repository import save_feedback_vector
+
 
 def analyze_feedback(customer_id: str, feedback: str):
     messages = [
@@ -46,6 +46,5 @@ Format:
     result["embedding"] = get_embedding(text_for_embedding)
 
     save_record(result)
-    save_feedback_vector(result)
 
     return result

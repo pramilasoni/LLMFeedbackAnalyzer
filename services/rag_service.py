@@ -1,60 +1,42 @@
+import json
+
 from providers.llm_provider import generate_response
-from services.cache_service import get_cached_answer, save_cached_answer
-from services.intent_service import detect_intent
-from services.retrieval_service import retrieve_feedback
-from services.filtering_service import apply_intent_filter
-from services.analysis_service import generate_intermediate_analysis
+from providers.embedding_provider import get_embedding
+from repositories.data_repository import get_all_records
+from utils.similarity import get_top_k_similar
 
 
 def ask_question(question: str):
-    cached = get_cached_answer(question)
-    if cached:
-        return cached
-
-    intent = detect_intent(question)
-
-    records = retrieve_feedback(query=question, top_k=5)
+    records = get_all_records()
 
     if not records:
-        return "No relevant data found."
+        return "No data available yet."
 
-    filtered = apply_intent_filter(records, intent)
+    question_embedding = get_embedding(question)
 
-    if not filtered:
-        return "No relevant data found for this question."
-
-    analysis = generate_intermediate_analysis(
-        question=question,
-        intent=intent,
-        records=filtered
+    top_results = get_top_k_similar(
+        question_embedding=question_embedding,
+        records=records,
+        k=3
     )
+
+    context = json.dumps(top_results, indent=2)
 
     messages = [
         {
             "role": "system",
-            "content": """
-You are an assistant generating business insights.
-
-Rules:
-- Use ONLY the provided analysis
-- Do NOT add new information
-- If data is insufficient, say so clearly
-"""
+            "content": "Answer ONLY based on the provided data. Do not make up information."
         },
         {
             "role": "user",
             "content": f"""
+Data:
+{context}
+
 Question:
 {question}
-
-Analysis:
-{analysis}
 """
         }
     ]
 
-    answer = generate_response(messages)
-
-    save_cached_answer(question, answer)
-
-    return answer
+    return generate_response(messages)
